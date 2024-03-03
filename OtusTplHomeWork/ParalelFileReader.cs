@@ -2,27 +2,26 @@
 
 namespace OtusTplHomeWork
 {
-    public class ParalelFileReader
+    public class ParallelFileReader
     {
-        public delegate void ReadComplit(ParalelFileReader sender, ReadComplitEventArgs e);
-        public event ReadComplit? ReadComplitEventHandler;
+        public delegate void ReadComplit(ParallelFileReader sender, ReadCompletedEventArgs e);
+        public event ReadComplit? ReadCompletedEventHandler;
 
-        public void ReadAllFromDirectory(string folderPath)
+        public async Task ReadAllFromDirectory(string folderPath)
         {
             if(Directory.Exists(folderPath))
             {
-                ReadFromFilePathList(Directory.GetFiles(folderPath).ToList());
+                await ReadFromFilePathList(Directory.GetFiles(folderPath).ToList());
             }
         }
-        public void ReadFromFilePathList(List<string> filePathList)
+        public async Task ReadFromFilePathList(List<string> filePathList)
         {
+            List<Task> tasks = new List<Task>();
             foreach (string filePath in filePathList)
-            {
-                if (File.Exists(filePath))
-                {
-                    Task.Run(() => ReadSpaceCountFromFile(filePath));
-                }
+            { 
+                tasks.Add(Task.Factory.StartNew(() => ReadSpaceCountFromFile(filePath)));
             }
+            Task.WaitAll(tasks.ToArray());
         }
         private void ReadSpaceCountFromFile(string filePath)
         {
@@ -39,16 +38,16 @@ namespace OtusTplHomeWork
                     }
                 }
                 sw.Stop();
-                ReadComplitEventHandler?.Invoke(this, new ReadComplitEventArgs { FilePath = filePath, SpaceCount = spaceCount, Time = sw.Elapsed });
+                ReadCompletedEventHandler?.Invoke(this, new ReadCompletedEventArgs { FilePath = filePath, SpaceCount = spaceCount, Time = sw.Elapsed });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                throw ex;
             }
         }
     }
     
-    public class ReadComplitEventArgs: EventArgs
+    public class ReadCompletedEventArgs: EventArgs
     {
         public string FilePath { get; set; }
         public long SpaceCount { get; set; }

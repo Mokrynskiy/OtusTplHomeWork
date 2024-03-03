@@ -1,19 +1,20 @@
-﻿namespace OtusTplHomeWork
+﻿using System.Diagnostics;
+
+namespace OtusTplHomeWork
 {
     public class Program
     {
         static void Main(string[] args)
-        {            
-            //List<string> filePathList = new List<string> { "Txt\\Book1.txt", "Txt\\Book2.txt", "Txt\\Book3.txt" };
-            ParalelFileReader reader = new ParalelFileReader();
-            reader.ReadComplitEventHandler += DisplayReadFileResult;
-            
-            //reader.ReadFromFilePathList(filePathList);
-            
+        {
+            Stopwatch sw = new Stopwatch();
+            ParallelFileReader reader = new ParallelFileReader();
+            reader.ReadCompletedEventHandler += DisplayReadFileResult; 
+            sw.Start();
             reader.ReadAllFromDirectory("Txt");
-            Console.ReadKey();
+            sw.Stop();
+            Console.WriteLine($"Общее время выполнения операции - {sw.Elapsed}");
         }
-        static void DisplayReadFileResult(ParalelFileReader sender, ReadComplitEventArgs e)
+        static void DisplayReadFileResult(ParallelFileReader sender, ReadCompletedEventArgs e)
         {
             Console.WriteLine($"Фаил {Path.GetFileName(e.FilePath)} прочитан. Количество пробелов {e.SpaceCount}. Время чтения {e.Time}");
         }
