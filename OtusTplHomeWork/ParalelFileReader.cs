@@ -25,16 +25,17 @@ namespace OtusTplHomeWork
             { 
                 if (File.Exists(filePath))
                 {
-                    tasks.Add(Task.Factory.StartNew(() => ReadSpaceCountFromFile(filePath)));
+                    tasks.Add(ReadSpaceCountFromFile(filePath));
                 }
                 else
                 {
                     throw new FileNotFoundException($"Ошибка! Не удалось найти путь {filePath}.");
                 }
             }
+            await Task.WhenAll(tasks);
             Task.WaitAll(tasks.ToArray());
         }
-        private void ReadSpaceCountFromFile(string filePath)
+        private async Task ReadSpaceCountFromFile(string filePath)
         {
             long spaceCount = 0;
             try
