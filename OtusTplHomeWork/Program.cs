@@ -10,7 +10,7 @@ namespace OtusTplHomeWork
             ParallelFileReader reader = new ParallelFileReader();
             reader.ReadCompletedEventHandler += DisplayReadFileResult;
             sw.Start();
-            var task = reader.ReadAllFromDirectory("Txtr");
+            var task = reader.ReadAllFromDirectory("Txt");
             if (task.Exception != null)
             {
                 Console.WriteLine(task.Exception.Message);
