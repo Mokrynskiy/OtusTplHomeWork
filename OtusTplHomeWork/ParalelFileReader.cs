@@ -13,13 +13,24 @@ namespace OtusTplHomeWork
             {
                 await ReadFromFilePathList(Directory.GetFiles(folderPath).ToList());
             }
+            else
+            {
+                throw new DirectoryNotFoundException($"Ошибка! Не удалось найти путь {folderPath}.");
+            }
         }
         public async Task ReadFromFilePathList(List<string> filePathList)
         {
             List<Task> tasks = new List<Task>();
             foreach (string filePath in filePathList)
             { 
-                tasks.Add(Task.Factory.StartNew(() => ReadSpaceCountFromFile(filePath)));
+                if (File.Exists(filePath))
+                {
+                    tasks.Add(Task.Factory.StartNew(() => ReadSpaceCountFromFile(filePath)));
+                }
+                else
+                {
+                    throw new FileNotFoundException($"Ошибка! Не удалось найти путь {filePath}.");
+                }
             }
             Task.WaitAll(tasks.ToArray());
         }

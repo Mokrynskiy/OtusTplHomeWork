@@ -8,11 +8,15 @@ namespace OtusTplHomeWork
         {
             Stopwatch sw = new Stopwatch();
             ParallelFileReader reader = new ParallelFileReader();
-            reader.ReadCompletedEventHandler += DisplayReadFileResult; 
+            reader.ReadCompletedEventHandler += DisplayReadFileResult;
             sw.Start();
-            reader.ReadAllFromDirectory("Txt");
+            var task = reader.ReadAllFromDirectory("Txtr");
+            if (task.Exception != null)
+            {
+                Console.WriteLine(task.Exception.Message);
+            }
             sw.Stop();
-            Console.WriteLine($"Общее время выполнения операции - {sw.Elapsed}");
+            Console.WriteLine($"Общее время выполнения операции - {sw.Elapsed}");            
         }
         static void DisplayReadFileResult(ParallelFileReader sender, ReadCompletedEventArgs e)
         {
