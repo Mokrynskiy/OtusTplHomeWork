@@ -4,8 +4,8 @@ namespace OtusTplHomeWork
 {
     public class ParallelFileReader
     {
-        public delegate void ReadComplit(ParallelFileReader sender, ReadCompletedEventArgs e);
-        public event ReadComplit? ReadCompletedEventHandler;
+        public delegate void ReadComplete(ParallelFileReader sender, ReadCompletedEventArgs e);
+        public event ReadComplete? ReadCompletedEventHandler;
 
         public async Task ReadAllFromDirectory(string folderPath)
         {
@@ -37,24 +37,17 @@ namespace OtusTplHomeWork
         private async Task ReadSpaceCountFromFile(string filePath)
         {
             long spaceCount = 0;
-            try
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            using (var sr = new StreamReader(filePath))
             {
-                Stopwatch sw = new Stopwatch();
-                sw.Start();
-                using(var sr = new StreamReader(filePath))
+                foreach (var item in sr.ReadToEnd())
                 {
-                    foreach (var item in sr.ReadToEnd())
-                    {
-                        if (item == ' ') spaceCount++;                        
-                    }
+                    if (item == ' ') spaceCount++;
                 }
-                sw.Stop();
-                ReadCompletedEventHandler?.Invoke(this, new ReadCompletedEventArgs { FilePath = filePath, SpaceCount = spaceCount, Time = sw.Elapsed });
             }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            sw.Stop();
+            ReadCompletedEventHandler?.Invoke(this, new ReadCompletedEventArgs { FilePath = filePath, SpaceCount = spaceCount, Time = sw.Elapsed });
         }
     }
     

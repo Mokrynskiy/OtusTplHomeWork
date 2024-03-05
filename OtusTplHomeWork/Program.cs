@@ -4,17 +4,13 @@ namespace OtusTplHomeWork
 {
     public class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             Stopwatch sw = new Stopwatch();
             ParallelFileReader reader = new ParallelFileReader();
             reader.ReadCompletedEventHandler += DisplayReadFileResult;
             sw.Start();
-            var task = reader.ReadAllFromDirectory("Txt");
-            if (task.Exception != null)
-            {
-                Console.WriteLine(task.Exception.Message);
-            }
+            await reader.ReadAllFromDirectory("Txt");
             sw.Stop();
             Console.WriteLine($"Общее время выполнения операции - {sw.Elapsed}");            
         }
